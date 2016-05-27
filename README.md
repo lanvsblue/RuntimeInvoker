@@ -7,7 +7,7 @@ Invoke a selector with name, for some trick or private method debugging
 # Usage
 
 # 1. Build & Run Demo
-# 2. View ViewController.m
+# 2. Check ViewController.m
 ```objc
 #import "ViewController.h"
 #import "NSObject+RuntimeInvoker.h"
