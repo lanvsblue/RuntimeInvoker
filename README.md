@@ -1,5 +1,5 @@
 # RuntimeInvoker
-Invoke any selector with name to an Objective-C Object
+Invoke any selector with name from an Objective-C Object
 
 # Purpose
 Invoke a selector with name, for some trick or private method debugging
