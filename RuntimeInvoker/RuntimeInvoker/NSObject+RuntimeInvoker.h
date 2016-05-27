@@ -39,4 +39,8 @@
  */
 - (id)invoke:(NSString *)selector args:(id)arg, ... ;
 
++ (id)invoke:(NSString *)selector;
++ (id)invoke:(NSString *)selector arguments:(NSArray *)arguments;
++ (id)invoke:(NSString *)selector args:(id)arg, ... ;
+
 @end

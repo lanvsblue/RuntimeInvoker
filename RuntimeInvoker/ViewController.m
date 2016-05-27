@@ -15,6 +15,10 @@
     return CGRectMake(0, 0, 100, 100);
 }
 
++ (UIEdgeInsets)aInsets {
+    return UIEdgeInsetsMake(0, 0, 100, 100);
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -39,6 +43,15 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self invoke:@"_setShowingLinkPreview:" args:@(YES), nil];
     });
+    
+    // class method selector
+    UIEdgeInsets insets = [[self.class invoke:@"aInsets"] UIEdgeInsetsValue];
+    NSLog(@"insets: %@", NSStringFromUIEdgeInsets(insets));
+    
+    // class method selector with argument
+    UIColor *color = [UIColor invoke:@"colorWithRed:green:blue:alpha:"
+                                args:@(0), @(0.5), @(1), nil];
+    NSLog(@"color: %@", color);
 }
 
 @end

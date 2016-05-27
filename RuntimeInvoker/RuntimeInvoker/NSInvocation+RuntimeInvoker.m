@@ -21,7 +21,7 @@
  */
 - (id)returnValueOfSignature:(NSMethodSignature *)signature {
     
-    id returnValue;
+    __unsafe_unretained id returnValue;
     
     RIMethodArgumentType returnType = [signature returnType];
     switch (returnType) {
