@@ -26,7 +26,7 @@
     [self.view invoke:@"setBackgroundColor:" arguments:@[ [UIColor whiteColor] ]];
     [self.view invoke:@"setAlpha:" arguments:@[ @(0.5) ]];
     [UIView animateWithDuration:3 animations:^{
-        [self.view invoke:@"setAlpha:" arguments:@[ @(1.0)]];
+        [self.view invoke:@"setAlpha:" arguments:@[ @(1.0) ]];
     }];
     
     // private selector
