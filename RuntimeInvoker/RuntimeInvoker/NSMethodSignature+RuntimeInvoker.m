@@ -9,20 +9,6 @@
 #import "NSMethodSignature+RuntimeInvoker.h"
 #import <UIKit/UIKit.h>
 
-@interface NSString (TypeChecking)
-
-- (BOOL)isEqualToType:(char [])type;
-
-@end
-
-@implementation NSString (TypeChecking)
-
-- (BOOL)isEqualToType:(char [])type {
-    return [self isEqualToString:[NSString stringWithUTF8String:type]];
-}
-
-@end
-
 @implementation NSMethodSignature (RuntimeInvoker)
 
 - (RIMethodArgumentType)returnType {
@@ -30,49 +16,48 @@
 }
 
 + (RIMethodArgumentType)argumentTypeWithEncode:(const char *)encode {
-    NSString *type = [NSString stringWithUTF8String:encode];
     
-    if ([type isEqualToType:@encode(char)]) {
+    if (strcmp(encode, @encode(char)) == 0) {
         return RIMethodArgumentTypeChar;
-    } else if ([type isEqualToType:@encode(int)]) {
+    } else if (strcmp(encode, @encode(int)) == 0) {
         return RIMethodArgumentTypeInt;
-    } else if ([type isEqualToType:@encode(short)]) {
+    } else if (strcmp(encode, @encode(short)) == 0) {
         return RIMethodArgumentTypeShort;
-    } else if ([type isEqualToType:@encode(long)]) {
+    } else if (strcmp(encode, @encode(long)) == 0) {
         return RIMethodArgumentTypeLong;
-    } else if ([type isEqualToType:@encode(long long)]) {
+    } else if (strcmp(encode, @encode(long long)) == 0) {
         return RIMethodArgumentTypeLongLong;
-    } else if ([type isEqualToType:@encode(unsigned char)]) {
+    } else if (strcmp(encode, @encode(unsigned char)) == 0) {
         return RIMethodArgumentTypeUnsignedChar;
-    } else if ([type isEqualToType:@encode(unsigned int)]) {
+    } else if (strcmp(encode, @encode(unsigned int)) == 0) {
         return RIMethodArgumentTypeUnsignedInt;
-    } else if ([type isEqualToType:@encode(unsigned short)]) {
+    } else if (strcmp(encode, @encode(unsigned short)) == 0) {
         return RIMethodArgumentTypeUnsignedShort;
-    } else if ([type isEqualToType:@encode(unsigned long)]) {
+    } else if (strcmp(encode, @encode(unsigned long)) == 0) {
         return RIMethodArgumentTypeUnsignedLong;
-    } else if ([type isEqualToType:@encode(unsigned long long)]) {
+    } else if (strcmp(encode, @encode(unsigned long long)) == 0) {
         return RIMethodArgumentTypeUnsignedLongLong;
-    } else if ([type isEqualToType:@encode(float)]) {
+    } else if (strcmp(encode, @encode(float)) == 0) {
         return RIMethodArgumentTypeFloat;
-    } else if ([type isEqualToType:@encode(double)]) {
+    } else if (strcmp(encode, @encode(double)) == 0) {
         return RIMethodArgumentTypeDouble;
-    } else if ([type isEqualToType:@encode(BOOL)]) {
+    } else if (strcmp(encode, @encode(BOOL)) == 0) {
         return RIMethodArgumentTypeBool;
-    } else if ([type isEqualToType:@encode(void)]) {
+    } else if (strcmp(encode, @encode(void)) == 0) {
         return RIMethodArgumentTypeVoid;
-    } else if ([type isEqualToType:@encode(char *)]) {
+    } else if (strcmp(encode, @encode(char *)) == 0) {
         return RIMethodArgumentTypeCharacterString;
-    } else if ([type isEqualToType:@encode(id)]) {
+    } else if (strcmp(encode, @encode(id)) == 0) {
         return RIMethodArgumentTypeObject;
-    } else if ([type isEqualToType:@encode(Class)]) {
+    } else if (strcmp(encode, @encode(Class)) == 0) {
         return RIMethodArgumentTypeClass;
-    } else if ([type isEqualToType:@encode(CGPoint)]) {
+    } else if (strcmp(encode, @encode(CGPoint)) == 0) {
         return RIMethodArgumentTypeCGPoint;
-    } else if ([type isEqualToType:@encode(CGSize)]) {
+    } else if (strcmp(encode, @encode(CGSize)) == 0) {
         return RIMethodArgumentTypeCGSize;
-    } else if ([type isEqualToType:@encode(CGRect)]) {
+    } else if (strcmp(encode, @encode(CGRect)) == 0) {
         return RIMethodArgumentTypeCGRect;
-    } else if ([type isEqualToType:@encode(UIEdgeInsets)]) {
+    } else if (strcmp(encode, @encode(UIEdgeInsets)) == 0) {
         return RIMethodArgumentTypeUIEdgeInsets;
     }
     
@@ -163,7 +148,7 @@
             }
         }];
     }
-
+    
     return invocation;
 }
 
