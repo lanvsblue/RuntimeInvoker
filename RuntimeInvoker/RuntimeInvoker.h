@@ -13,58 +13,58 @@
 /**
  *  Invoke a selector with name
  *
- *  @param selector selector name
+ *  @param selector Selector name
  *
- *  @return return value
+ *  @return Return value
  */
 - (id)invoke:(NSString *)selector;
 
 /**
  *  Invoke a selector with name and args
  *
- *  @param selector selector name
- *  @param arg      arguments list (end with nil)
+ *  @param selector Selector name
+ *  @param arg      Arguments list (end with nil)
  *
- *  @return return value
+ *  @return Return value
  */
 - (id)invoke:(NSString *)selector args:(id)arg, ... ;
 
 /**
  *  Invoke a selector with name and args
  *
- *  @param selector  selector name
- *  @param arguments arguments list
+ *  @param selector  Selector name
+ *  @param arguments Arguments list
  *
- *  @return return value
+ *  @return Return value
  */
 - (id)invoke:(NSString *)selector arguments:(NSArray *)arguments;
 
 /**
  *  Invoke a selector with name (Class Method)
  *
- *  @param selector selector name
+ *  @param selector Selector name
  *
- *  @return return value
+ *  @return Return value
  */
 + (id)invoke:(NSString *)selector;
 
 /**
  *  Invoke a selector with name and args (Class Method)
  *
- *  @param selector selector name
- *  @param arg      arguments list (end with nil)
+ *  @param selector Selector name
+ *  @param arg      Arguments list (end with nil)
  *
- *  @return return value
+ *  @return Return value
  */
 + (id)invoke:(NSString *)selector args:(id)arg, ... ;
 
 /**
  *  Invoke a selector with name and args (Class Method)
  *
- *  @param selector  selector name
- *  @param arguments arguments list
+ *  @param selector  Selector name
+ *  @param arguments Arguments list
  *
- *  @return return value
+ *  @return Return value
  */
 + (id)invoke:(NSString *)selector arguments:(NSArray *)arguments;
 

@@ -21,7 +21,7 @@ va_end(args);\
 
 #pragma mark - NSMethodSignature Category
 
-//  Objective-C Type Encoding: http://nshipster.com/type-encodings/
+//  Objective-C type encoding: http://nshipster.com/type-encodings/
 typedef NS_ENUM(NSInteger, RIMethodArgumentType) {
     RIMethodArgumentTypeUnknown             = 0,
     RIMethodArgumentTypeChar,
@@ -49,10 +49,22 @@ typedef NS_ENUM(NSInteger, RIMethodArgumentType) {
 
 @implementation NSMethodSignature (RuntimeInvoker)
 
+/**
+ *  Get type of return value
+ *
+ *  @return Return value type
+ */
 - (RIMethodArgumentType)returnType {
     return [NSMethodSignature argumentTypeWithEncode:[self methodReturnType]];
 }
 
+/**
+ *  Type encoding for argument
+ *
+ *  @param encode Encode for argument
+ *
+ *  @return RIMethodArgumentType
+ */
 + (RIMethodArgumentType)argumentTypeWithEncode:(const char *)encode {
     
     if (strcmp(encode, @encode(char)) == 0) {
@@ -97,95 +109,112 @@ typedef NS_ENUM(NSInteger, RIMethodArgumentType) {
         return RIMethodArgumentTypeCGRect;
     } else if (strcmp(encode, @encode(UIEdgeInsets)) == 0) {
         return RIMethodArgumentTypeUIEdgeInsets;
+    } else {
+        return RIMethodArgumentTypeUnknown;
     }
-    
-    return RIMethodArgumentTypeUnknown;
 }
 
+/**
+ *  Get type of argument at index
+ *
+ *  @param index Argument index
+ *
+ *  @return Return value type
+ */
 - (RIMethodArgumentType)argumentTypeAtIndex:(NSInteger)index {
     const char *encode = [self getArgumentTypeAtIndex:index];
     return [NSMethodSignature argumentTypeWithEncode:encode];
 }
 
+/**
+ *  Setup arguments for invocation
+ *
+ *  @param arguments Arguments
+ *
+ *  @return NSInvocation
+ */
 - (NSInvocation *)invocationWithArguments:(NSArray *)arguments {
+    
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:self];
     
-    if ([arguments isKindOfClass:[NSArray class]]) {
-        [arguments enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            NSInteger index = idx + 2; // start with 2
-            RIMethodArgumentType type = [self argumentTypeAtIndex:index];
-            switch (type) {
-                case RIMethodArgumentTypeChar: {
-                    char value = [obj charValue];
-                    [invocation setArgument:&value atIndex:index];
-                } break;
-                case RIMethodArgumentTypeInt: {
-                    int value = [obj intValue];
-                    [invocation setArgument:&value atIndex:index];
-                } break;
-                case RIMethodArgumentTypeShort: {
-                    short value = [obj shortValue];
-                    [invocation setArgument:&value atIndex:index];
-                } break;
-                case RIMethodArgumentTypeLong: {
-                    long value = [obj longValue];
-                    [invocation setArgument:&value atIndex:index];
-                } break;
-                case RIMethodArgumentTypeLongLong: {
-                    long long value = [obj longLongValue];
-                    [invocation setArgument:&value atIndex:index];
-                } break;
-                case RIMethodArgumentTypeUnsignedChar: {
-                    unsigned char value = [obj unsignedCharValue];
-                    [invocation setArgument:&value atIndex:index];
-                } break;
-                case RIMethodArgumentTypeUnsignedInt: {
-                    unsigned int value = [obj unsignedIntValue];
-                    [invocation setArgument:&value atIndex:index];
-                } break;
-                case RIMethodArgumentTypeUnsignedShort: {
-                    unsigned short value = [obj unsignedShortValue];
-                    [invocation setArgument:&value atIndex:index];
-                } break;
-                case RIMethodArgumentTypeUnsignedLong: {
-                    unsigned long value = [obj unsignedLongValue];
-                    [invocation setArgument:&value atIndex:index];
-                } break;
-                case RIMethodArgumentTypeUnsignedLongLong: {
-                    unsigned long long value = [obj unsignedLongLongValue];
-                    [invocation setArgument:&value atIndex:index];
-                } break;
-                case RIMethodArgumentTypeFloat: {
-                    float value = [obj floatValue];
-                    [invocation setArgument:&value atIndex:index];
-                } break;
-                case RIMethodArgumentTypeDouble: {
-                    double value = [obj doubleValue];
-                    [invocation setArgument:&value atIndex:index];
-                } break;
-                case RIMethodArgumentTypeBool: {
-                    BOOL value = [obj boolValue];
-                    [invocation setArgument:&value atIndex:index];
-                } break;
-                case RIMethodArgumentTypeVoid: {
-                    
-                } break;
-                case RIMethodArgumentTypeCharacterString: {
-                    const char *value = [obj UTF8String];
-                    [invocation setArgument:&value atIndex:index];
-                } break;
-                case RIMethodArgumentTypeObject: {
-                    [invocation setArgument:&obj atIndex:index];
-                } break;
-                case RIMethodArgumentTypeClass: {
-                    Class value = [obj class];
-                    [invocation setArgument:&value atIndex:index];
-                } break;
-                    
-                default: break;
-            }
-        }];
-    }
+    NSAssert(arguments == nil || [arguments isKindOfClass:[NSArray class]], @"# RuntimeInvoker # arguments is not an array");
+    
+    [arguments enumerateObjectsUsingBlock:^(id  _Nonnull argument, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        NSInteger index = idx + 2; // start with 2
+        RIMethodArgumentType type = [self argumentTypeAtIndex:index];
+        
+        switch (type) {
+            case RIMethodArgumentTypeChar: {
+                char value = [argument charValue];
+                [invocation setArgument:&value atIndex:index];
+            } break;
+            case RIMethodArgumentTypeInt: {
+                int value = [argument intValue];
+                [invocation setArgument:&value atIndex:index];
+            } break;
+            case RIMethodArgumentTypeShort: {
+                short value = [argument shortValue];
+                [invocation setArgument:&value atIndex:index];
+            } break;
+            case RIMethodArgumentTypeLong: {
+                long value = [argument longValue];
+                [invocation setArgument:&value atIndex:index];
+            } break;
+            case RIMethodArgumentTypeLongLong: {
+                long long value = [argument longLongValue];
+                [invocation setArgument:&value atIndex:index];
+            } break;
+            case RIMethodArgumentTypeUnsignedChar: {
+                unsigned char value = [argument unsignedCharValue];
+                [invocation setArgument:&value atIndex:index];
+            } break;
+            case RIMethodArgumentTypeUnsignedInt: {
+                unsigned int value = [argument unsignedIntValue];
+                [invocation setArgument:&value atIndex:index];
+            } break;
+            case RIMethodArgumentTypeUnsignedShort: {
+                unsigned short value = [argument unsignedShortValue];
+                [invocation setArgument:&value atIndex:index];
+            } break;
+            case RIMethodArgumentTypeUnsignedLong: {
+                unsigned long value = [argument unsignedLongValue];
+                [invocation setArgument:&value atIndex:index];
+            } break;
+            case RIMethodArgumentTypeUnsignedLongLong: {
+                unsigned long long value = [argument unsignedLongLongValue];
+                [invocation setArgument:&value atIndex:index];
+            } break;
+            case RIMethodArgumentTypeFloat: {
+                float value = [argument floatValue];
+                [invocation setArgument:&value atIndex:index];
+            } break;
+            case RIMethodArgumentTypeDouble: {
+                double value = [argument doubleValue];
+                [invocation setArgument:&value atIndex:index];
+            } break;
+            case RIMethodArgumentTypeBool: {
+                BOOL value = [argument boolValue];
+                [invocation setArgument:&value atIndex:index];
+            } break;
+            case RIMethodArgumentTypeVoid: {
+                
+            } break;
+            case RIMethodArgumentTypeCharacterString: {
+                const char *value = [argument UTF8String];
+                [invocation setArgument:&value atIndex:index];
+            } break;
+            case RIMethodArgumentTypeObject: {
+                [invocation setArgument:&argument atIndex:index];
+            } break;
+            case RIMethodArgumentTypeClass: {
+                Class value = [argument class];
+                [invocation setArgument:&value atIndex:index];
+            } break;
+                
+            default: break;
+        }
+    }];
     
     return invocation;
 }
@@ -197,18 +226,33 @@ typedef NS_ENUM(NSInteger, RIMethodArgumentType) {
 @implementation NSInvocation (RuntimeInvoker)
 
 /**
+ *  Invoke a selector
+ *
+ *  @param target   Target
+ *  @param selector Selector
+ *  @param type     Return value type
+ *
+ *  @return Return value
+ */
+- (id)invoke:(id)target selector:(SEL)selector returnType:(RIMethodArgumentType)type {
+    self.target = target;
+    self.selector = selector;
+    [self invoke];
+    return [self returnValueForType:type];
+}
+
+/**
  *  Boxing returnType of NSMethodSignature
  *
- *  @param signature signature
+ *  @param signature Signature
  *
- *  @return boxed value
+ *  @return Boxed value
  */
-- (id)returnValueOfSignature:(NSMethodSignature *)signature {
+- (id)returnValueForType:(RIMethodArgumentType)type {
     
     __unsafe_unretained id returnValue;
     
-    RIMethodArgumentType returnType = [signature returnType];
-    switch (returnType) {
+    switch (type) {
         case RIMethodArgumentTypeChar: {
             char value;
             [self getReturnValue:&value];
@@ -308,13 +352,6 @@ typedef NS_ENUM(NSInteger, RIMethodArgumentType) {
     return returnValue;
 }
 
-- (id)invoke:(id)target selector:(SEL)selector signature:(NSMethodSignature *)signature {
-    self.target = target;
-    self.selector = selector;
-    [self invoke];
-    return [self returnValueOfSignature:signature];
-}
-
 @end
 
 #pragma mark - NSObject Category
@@ -326,7 +363,7 @@ id _invoke(id target, NSString *selector, NSArray *arguments) {
     NSMethodSignature *signature = [target methodSignatureForSelector:sel];
     if (signature) {
         NSInvocation *invocation = [signature invocationWithArguments:arguments];
-        id returnValue = [invocation invoke:target selector:sel signature:signature];
+        id returnValue = [invocation invoke:target selector:sel returnType:signature.returnType];
         return returnValue;
     } else {
         NSLog(@"# RuntimeInvoker # selector: \"%@\" NOT FOUND", selector);
