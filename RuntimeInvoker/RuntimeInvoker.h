@@ -1,5 +1,5 @@
 //
-//  NSObject+RuntimeInvoker.h
+//  RuntimeInvoker.h
 //  RuntimeInvoker
 //
 //  Created by cyan on 16/5/27.

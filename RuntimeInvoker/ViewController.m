@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-#import "NSObject+RuntimeInvoker.h"
+#import "RuntimeInvoker.h"
 
 @implementation ViewController
 

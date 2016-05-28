@@ -1,13 +1,51 @@
 //
-//  NSMethodSignature+RuntimeInvoker.m
+//  RuntimeInvoker.m
 //  RuntimeInvoker
 //
-//  Created by cyan on 16/3/31.
+//  Created by cyan on 16/5/27.
 //  Copyright © 2016年 cyan. All rights reserved.
 //
 
-#import "NSMethodSignature+RuntimeInvoker.h"
+#import "RuntimeInvoker.h"
 #import <UIKit/UIKit.h>
+
+#define _DEFINE_ARRAY(arg) \
+NSMutableArray *array = [NSMutableArray arrayWithObject:arg];\
+va_list args;\
+va_start(args, arg);\
+id next = nil;\
+while ((next = va_arg(args,id))) {\
+    [array addObject:next];\
+}\
+va_end(args);\
+
+#pragma mark - NSMethodSignature Category
+
+//  Objective-C Type Encoding: http://nshipster.com/type-encodings/
+typedef NS_ENUM(NSInteger, RIMethodArgumentType) {
+    RIMethodArgumentTypeUnknown             = 0,
+    RIMethodArgumentTypeChar,
+    RIMethodArgumentTypeInt,
+    RIMethodArgumentTypeShort,
+    RIMethodArgumentTypeLong,
+    RIMethodArgumentTypeLongLong,
+    RIMethodArgumentTypeUnsignedChar,
+    RIMethodArgumentTypeUnsignedInt,
+    RIMethodArgumentTypeUnsignedShort,
+    RIMethodArgumentTypeUnsignedLong,
+    RIMethodArgumentTypeUnsignedLongLong,
+    RIMethodArgumentTypeFloat,
+    RIMethodArgumentTypeDouble,
+    RIMethodArgumentTypeBool,
+    RIMethodArgumentTypeVoid,
+    RIMethodArgumentTypeCharacterString,
+    RIMethodArgumentTypeCGPoint,
+    RIMethodArgumentTypeCGSize,
+    RIMethodArgumentTypeCGRect,
+    RIMethodArgumentTypeUIEdgeInsets,
+    RIMethodArgumentTypeObject,
+    RIMethodArgumentTypeClass
+};
 
 @implementation NSMethodSignature (RuntimeInvoker)
 
@@ -150,6 +188,172 @@
     }
     
     return invocation;
+}
+
+@end
+
+#pragma mark - NSInvocation Category
+
+@implementation NSInvocation (RuntimeInvoker)
+
+/**
+ *  Boxing returnType of NSMethodSignature
+ *
+ *  @param signature signature
+ *
+ *  @return boxed value
+ */
+- (id)returnValueOfSignature:(NSMethodSignature *)signature {
+    
+    __unsafe_unretained id returnValue;
+    
+    RIMethodArgumentType returnType = [signature returnType];
+    switch (returnType) {
+        case RIMethodArgumentTypeChar: {
+            char value;
+            [self getReturnValue:&value];
+            returnValue = @(value);
+        } break;
+        case RIMethodArgumentTypeInt:  {
+            int value;
+            [self getReturnValue:&value];
+            returnValue = @(value);
+        } break;
+        case RIMethodArgumentTypeShort:  {
+            short value;
+            [self getReturnValue:&value];
+            returnValue = @(value);
+        } break;
+        case RIMethodArgumentTypeLong:  {
+            long value;
+            [self getReturnValue:&value];
+            returnValue = @(value);
+        } break;
+        case RIMethodArgumentTypeLongLong:  {
+            long long value;
+            [self getReturnValue:&value];
+            returnValue = @(value);
+        } break;
+        case RIMethodArgumentTypeUnsignedChar:  {
+            unsigned char value;
+            [self getReturnValue:&value];
+            returnValue = @(value);
+        } break;
+        case RIMethodArgumentTypeUnsignedInt:  {
+            unsigned int value;
+            [self getReturnValue:&value];
+            returnValue = @(value);
+        } break;
+        case RIMethodArgumentTypeUnsignedShort:  {
+            unsigned short value;
+            [self getReturnValue:&value];
+            returnValue = @(value);
+        } break;
+        case RIMethodArgumentTypeUnsignedLong:  {
+            unsigned long value;
+            [self getReturnValue:&value];
+            returnValue = @(value);
+        } break;
+        case RIMethodArgumentTypeUnsignedLongLong:  {
+            unsigned long long value;
+            [self getReturnValue:&value];
+            returnValue = @(value);
+        } break;
+        case RIMethodArgumentTypeFloat:  {
+            float value;
+            [self getReturnValue:&value];
+            returnValue = @(value);
+        } break;
+        case RIMethodArgumentTypeDouble:  {
+            double value;
+            [self getReturnValue:&value];
+            returnValue = @(value);
+        } break;
+        case RIMethodArgumentTypeBool: {
+            BOOL value;
+            [self getReturnValue:&value];
+            returnValue = @(value);
+        } break;
+        case RIMethodArgumentTypeCharacterString: {
+            const char *value;
+            [self getReturnValue:&value];
+            returnValue = [NSString stringWithUTF8String:value];
+        } break;
+        case RIMethodArgumentTypeCGPoint: {
+            CGPoint value;
+            [self getReturnValue:&value];
+            returnValue = [NSValue valueWithCGPoint:value];
+        } break;
+        case RIMethodArgumentTypeCGSize: {
+            CGSize value;
+            [self getReturnValue:&value];
+            returnValue = [NSValue valueWithCGSize:value];
+        } break;
+        case RIMethodArgumentTypeCGRect: {
+            CGRect value;
+            [self getReturnValue:&value];
+            returnValue = [NSValue valueWithCGRect:value];
+        } break;
+        case RIMethodArgumentTypeUIEdgeInsets: {
+            UIEdgeInsets value;
+            [self getReturnValue:&value];
+            returnValue = [NSValue valueWithUIEdgeInsets:value];
+        } break;
+        case RIMethodArgumentTypeObject:
+        case RIMethodArgumentTypeClass:
+            [self getReturnValue:&returnValue];
+            break;
+        default: break;
+    }
+    return returnValue;
+}
+
+- (id)invoke:(id)target selector:(SEL)selector {
+    self.target = target;
+    self.selector = selector;
+    [self invoke];
+    NSMethodSignature *signature = [target methodSignatureForSelector:selector];
+    return [self returnValueOfSignature:signature];
+}
+
+@end
+
+#pragma mark - NSObject Category
+
+@implementation NSObject (RuntimeInvoker)
+
+id _invoke(id target, NSString *selector, NSArray *arguments) {
+    SEL sel = NSSelectorFromString(selector);
+    NSMethodSignature *signature = [target methodSignatureForSelector:sel];
+    NSInvocation *invocation = [signature invocationWithArguments:arguments];
+    id returnValue = [invocation invoke:target selector:sel];
+    return returnValue;
+}
+
+- (id)invoke:(NSString *)selector arguments:(NSArray *)arguments {
+    return _invoke(self, selector, arguments);
+}
+
+- (id)invoke:(NSString *)selector {
+    return [self invoke:selector arguments:nil];
+}
+
+- (id)invoke:(NSString *)selector args:(id)arg, ... {
+    _DEFINE_ARRAY(arg);
+    return [self invoke:selector arguments:array];
+}
+
++ (id)invoke:(NSString *)selector {
+    return [self.class invoke:selector arguments:nil];
+}
+
++ (id)invoke:(NSString *)selector args:(id)arg, ... {
+    _DEFINE_ARRAY(arg);
+    return [self.class invoke:selector arguments:array];
+}
+
++ (id)invoke:(NSString *)selector arguments:(NSArray *)arguments {
+    return _invoke(self.class, selector, arguments);
 }
 
 @end
