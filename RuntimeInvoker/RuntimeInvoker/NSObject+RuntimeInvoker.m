@@ -10,7 +10,7 @@
 #import "NSInvocation+RuntimeInvoker.h"
 #import "NSMethodSignature+RuntimeInvoker.h"
 
-#define _TO_ARRAY(arg) \
+#define _DEFINE_ARRAY(arg) \
 NSMutableArray *array = [NSMutableArray arrayWithObject:arg];\
 va_list args;\
 va_start(args, arg);\
@@ -30,16 +30,16 @@ id _invoke(id target, NSString *selector, NSArray *arguments) {
     return returnValue;
 }
 
-- (id)invoke:(NSString *)selector {
-    return [self invoke:selector arguments:nil];
-}
-
 - (id)invoke:(NSString *)selector arguments:(NSArray *)arguments {
     return _invoke(self, selector, arguments);
 }
 
+- (id)invoke:(NSString *)selector {
+    return [self invoke:selector arguments:nil];
+}
+
 - (id)invoke:(NSString *)selector args:(id)arg, ... {
-    _TO_ARRAY(arg);
+    _DEFINE_ARRAY(arg);
     return [self invoke:selector arguments:array];
 }
 
@@ -47,13 +47,13 @@ id _invoke(id target, NSString *selector, NSArray *arguments) {
     return [self.class invoke:selector arguments:nil];
 }
 
-+ (id)invoke:(NSString *)selector arguments:(NSArray *)arguments {
-    return _invoke(self.class, selector, arguments);
++ (id)invoke:(NSString *)selector args:(id)arg, ... {
+    _DEFINE_ARRAY(arg);
+    return [self.class invoke:selector arguments:array];
 }
 
-+ (id)invoke:(NSString *)selector args:(id)arg, ... {
-    _TO_ARRAY(arg);
-    return [self.class invoke:selector arguments:array];
++ (id)invoke:(NSString *)selector arguments:(NSArray *)arguments {
+    return _invoke(self.class, selector, arguments);
 }
 
 @end
