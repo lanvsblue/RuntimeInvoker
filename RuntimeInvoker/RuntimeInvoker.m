@@ -308,11 +308,10 @@ typedef NS_ENUM(NSInteger, RIMethodArgumentType) {
     return returnValue;
 }
 
-- (id)invoke:(id)target selector:(SEL)selector {
+- (id)invoke:(id)target selector:(SEL)selector signature:(NSMethodSignature *)signature {
     self.target = target;
     self.selector = selector;
     [self invoke];
-    NSMethodSignature *signature = [target methodSignatureForSelector:selector];
     return [self returnValueOfSignature:signature];
 }
 
@@ -325,9 +324,14 @@ typedef NS_ENUM(NSInteger, RIMethodArgumentType) {
 id _invoke(id target, NSString *selector, NSArray *arguments) {
     SEL sel = NSSelectorFromString(selector);
     NSMethodSignature *signature = [target methodSignatureForSelector:sel];
-    NSInvocation *invocation = [signature invocationWithArguments:arguments];
-    id returnValue = [invocation invoke:target selector:sel];
-    return returnValue;
+    if (signature) {
+        NSInvocation *invocation = [signature invocationWithArguments:arguments];
+        id returnValue = [invocation invoke:target selector:sel signature:signature];
+        return returnValue;
+    } else {
+        NSLog(@"# RuntimeInvoker # selector: \"%@\" NOT FOUND", selector);
+        return nil;
+    }
 }
 
 - (id)invoke:(NSString *)selector arguments:(NSArray *)arguments {
