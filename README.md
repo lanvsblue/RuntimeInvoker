@@ -1,4 +1,4 @@
-[🇨🇳中文介绍](https://github.com/cyanzhong/RuntimeInvoker/blob/master/README_CN.md)
+🇨🇳[中文介绍](https://github.com/cyanzhong/RuntimeInvoker/blob/master/README_CN.md)
 
 # RuntimeInvoker
 Invoke any selector with name from an Objective-C Object
