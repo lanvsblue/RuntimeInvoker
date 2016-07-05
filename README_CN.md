@@ -1,4 +1,7 @@
 # RuntimeInvoker
+![Language](https://img.shields.io/badge/language-objc-orange.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+
 使用方法名称调用任何 Objective-C 对象的方法
 
 # 目的
