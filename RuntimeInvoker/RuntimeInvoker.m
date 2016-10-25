@@ -398,3 +398,20 @@ id _invoke(id target, NSString *selector, NSArray *arguments) {
 }
 
 @end
+
+@implementation NSString (RuntimeInvoker)
+
+- (id)invokeClassMethod:(NSString *)selector {
+    return [self invokeClassMethod:selector arguments:nil];
+}
+
+- (id)invokeClassMethod:(NSString *)selector args:(id)arg, ... {
+    _DEFINE_ARRAY(arg);
+    return [self invokeClassMethod:selector arguments:array];
+}
+
+- (id)invokeClassMethod:(NSString *)selector arguments:(NSArray *)arguments {
+    return [NSClassFromString(self) invoke:selector arguments:arguments];
+}
+
+@end
