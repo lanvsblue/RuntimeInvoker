@@ -68,5 +68,13 @@
     [@"ViewController" invokeClassMethod:@"cHJpbnRJbmZv" classEncryptType:LANEncryptTypeBase64 selectorEncryptType:LANEncryptTypeBase64];
 }
 
+-(void)printInfo {
+    NSLog(@"this is -(void)printInfo selector");
+}
+
++(void)printInfo {
+    NSLog(@"this is +(void)printInfo selector");
+}
+
 @end
 ```
