@@ -375,17 +375,53 @@ id _invoke(id target, NSString *selector, NSArray *arguments) {
     return _invoke(self, selector, arguments);
 }
 
+- (id)invoke:(NSString *)selector selectorEncryptType:(LANEncryptType) type arguments:(NSArray *)arguments {
+    NSString *decodeSelectot = [self.class decodeSelector:selector selectorEncryptType:type];
+    return [self invoke:decodeSelectot arguments:arguments];
+}
+
+
 - (id)invoke:(NSString *)selector {
     return [self invoke:selector arguments:nil];
 }
+
+- (id)invoke:(NSString *)selector selectorEncryptType:(LANEncryptType) type {
+    NSString *decodeSelectot = [self.class decodeSelector:selector selectorEncryptType:type];
+    return [self invoke:decodeSelectot];
+}
+
 
 - (id)invoke:(NSString *)selector args:(id)arg, ... {
     _DEFINE_ARRAY(arg);
     return [self invoke:selector arguments:array];
 }
 
+
+- (id)invoke:(NSString *)selector selectorEncryptType:(LANEncryptType) type args:(id)arg, ... {
+    _DEFINE_ARRAY(arg);
+    NSString *decodeSelectot = [self.class decodeSelector:selector selectorEncryptType:type];
+    return [self invoke:decodeSelectot arguments:array];
+}
+
+
++ (NSString *)decodeSelector:(NSString *)selector selectorEncryptType:(LANEncryptType) type{
+    switch (type) {
+        case LANEncryptTypeNoEncrypt:    // 未加密
+            return selector;
+        case LANEncryptTypeBase64:       // base64加密
+            return [selector decodeBase64];
+        default:
+            return @"";
+    }
+}
+
 + (id)invoke:(NSString *)selector {
     return [self.class invoke:selector arguments:nil];
+}
+
++ (id)invoke:(NSString *)selector selectorEncryptType:(LANEncryptType) type {
+    NSString *decodeSelectot = [self.class decodeSelector:selector selectorEncryptType:type];
+    return [self.class invoke:decodeSelectot arguments:nil];
 }
 
 + (id)invoke:(NSString *)selector args:(id)arg, ... {
@@ -393,8 +429,20 @@ id _invoke(id target, NSString *selector, NSArray *arguments) {
     return [self.class invoke:selector arguments:array];
 }
 
++ (id)invoke:(NSString *)selector selectorEncryptType:(LANEncryptType) type args:(id)arg, ... {
+    _DEFINE_ARRAY(arg);
+    NSString *decodeSelectot = [self.class decodeSelector:selector selectorEncryptType:type];
+    return [self.class invoke:decodeSelectot arguments:array];
+}
+
 + (id)invoke:(NSString *)selector arguments:(NSArray *)arguments {
     return _invoke(self.class, selector, arguments);
+}
+
+
++ (id)invoke:(NSString *)selector selectorEncryptType:(LANEncryptType) type arguments:(NSArray *)arguments {
+    NSString *decodeSelectot = [self.class decodeSelector:selector selectorEncryptType:type];
+    return [self invoke:decodeSelectot arguments:arguments];
 }
 
 @end
@@ -405,13 +453,37 @@ id _invoke(id target, NSString *selector, NSArray *arguments) {
     return [self invokeClassMethod:selector arguments:nil];
 }
 
+- (id)invokeClassMethod:(NSString *)selector classEncryptType:(LANEncryptType)classType selectorEncryptType:(LANEncryptType)selectorType {
+    NSString *decodeClass = [self.class decodeSelector:self selectorEncryptType:classType];
+    NSString *decodeSelector = [self.class decodeSelector:selector selectorEncryptType:selectorType];
+    return [decodeClass invokeClassMethod:decodeSelector];
+}
+
 - (id)invokeClassMethod:(NSString *)selector args:(id)arg, ... {
     _DEFINE_ARRAY(arg);
     return [self invokeClassMethod:selector arguments:array];
 }
 
+- (id)invokeClassMethod:(NSString *)selector classEncryptType:(LANEncryptType)classType selectorEncryptType:(LANEncryptType)selectorType args:(id)arg, ... {
+    NSString *decodeClass = [self.class decodeSelector:self selectorEncryptType:classType];
+    NSString *decodeSelector = [self.class decodeSelector:selector selectorEncryptType:selectorType];
+    _DEFINE_ARRAY(arg);
+    return [decodeClass invokeClassMethod:decodeSelector arguments:array];
+}
+
 - (id)invokeClassMethod:(NSString *)selector arguments:(NSArray *)arguments {
     return [NSClassFromString(self) invoke:selector arguments:arguments];
+}
+
+- (id)invokeClassMethod:(NSString *)selector classEncryptType:(LANEncryptType)classType selectorEncryptType:(LANEncryptType)selectorType arguments:(NSArray *)arguments {
+    NSString *decodeClass = [self.class decodeSelector:self selectorEncryptType:classType];
+    NSString *decodeSelector = [self.class decodeSelector:selector selectorEncryptType:selectorType];
+    return [NSClassFromString(decodeClass) invoke:decodeSelector arguments:arguments];
+}
+
+- (NSString *)decodeBase64{
+    NSData *decodeData = [[NSData alloc] initWithBase64EncodedString:self options:0];
+    return [[NSString alloc] initWithData:decodeData encoding:NSUTF8StringEncoding];
 }
 
 @end

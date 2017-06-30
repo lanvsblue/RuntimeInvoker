@@ -14,7 +14,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    ViewController *controller = [[ViewController alloc] initWithURL:[NSURL URLWithString:@"http://ioszen.com"]];
+    ViewController *controller = [[ViewController alloc] initWithURL:[NSURL URLWithString:@"http://www.lanvsblue.top"]];
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.rootViewController = controller;
     [self.window makeKeyAndVisible];

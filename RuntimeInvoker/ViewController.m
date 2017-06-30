@@ -41,7 +41,8 @@
     [self invoke:@"_setShowingLinkPreview:" args:@(NO), nil];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self invoke:@"_setShowingLinkPreview:" args:@(YES), nil];
+//        [self invoke:@"_setShowingLinkPreview:" args:@(YES), nil];
+        [self invoke:@"X3NldFNob3dpbmdMaW5rUHJldmlldzo=" selectorEncryptType:LANEncryptTypeBase64 args:@(YES), nil];
     });
     
     // class method selector
@@ -52,6 +53,23 @@
     UIColor *color = [UIColor invoke:@"colorWithRed:green:blue:alpha:"
                                 args:@(0), @(0.5), @(1), nil];
     NSLog(@"color: %@", color);
+    
+    
+    
+    
+    // 加密 [self printInfo]
+    [self invoke:@"cHJpbnRJbmZv" selectorEncryptType:LANEncryptTypeBase64];
+    
+    // 加密 [ViewController printInfo]
+    [@"ViewController" invokeClassMethod:@"cHJpbnRJbmZv" classEncryptType:LANEncryptTypeBase64 selectorEncryptType:LANEncryptTypeBase64];
+}
+
+-(void)printInfo {
+    NSLog(@"this is -(void)printInfo selector");
+}
+
++(void)printInfo {
+    NSLog(@"this is +(void)printInfo selector");
 }
 
 @end

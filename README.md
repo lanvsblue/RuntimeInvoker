@@ -2,17 +2,15 @@
 ![Language](https://img.shields.io/badge/language-objc-orange.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-Invoke any selector with name from an Objective-C Object
+使用方法名称调用任何 Objective-C 对象的方法
 
-🇨🇳[中文介绍](https://github.com/cyanzhong/RuntimeInvoker/blob/master/README_CN.md)
+# 目的
+使用方法名称调用方法，可以用在一些奇技淫巧或是私有方法调试
 
-# Purpose
-Invoke a selector with name, for some trick or private method debugging
+# 用法
 
-# Usage
-
-# 1. Build & Run Demo
-# 2. Check ViewController.m
+# 1. 编译运行程序
+# 2. 在 ViewController.m 中找到用法
 ```objc
 #import "ViewController.h"
 #import "RuntimeInvoker.h"
@@ -30,36 +28,44 @@ Invoke a selector with name, for some trick or private method debugging
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // public selector
+    // 公开方法
     CGRect rect = [[self invoke:@"aRect"] CGRectValue];
     NSLog(@"rect: %@", NSStringFromCGRect(rect));
     
-    // public selector with argument
+    // 公开方法 & 参数传递
     [self.view invoke:@"setBackgroundColor:" arguments:@[ [UIColor whiteColor] ]];
     [self.view invoke:@"setAlpha:" arguments:@[ @(0.5) ]];
     [UIView animateWithDuration:3 animations:^{
         [self.view invoke:@"setAlpha:" arguments:@[ @(1.0) ]];
     }];
     
-    // private selector
+    // 私有方法
     int sizeClass = [[self invoke:@"_verticalSizeClass"] intValue];
     NSLog(@"sizeClass: %d", sizeClass);
     
-    // private selector with argument
+    // 私有方法 & 参数传递
     [self invoke:@"_setShowingLinkPreview:" args:@(NO), nil];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self invoke:@"_setShowingLinkPreview:" args:@(YES), nil];
     });
     
-    // class method selector
+    // 类方法
     UIEdgeInsets insets = [[self.class invoke:@"aInsets"] UIEdgeInsetsValue];
     NSLog(@"insets: %@", NSStringFromUIEdgeInsets(insets));
     
-    // class method selector with argument
+    // 类方法 & 参数传递
     UIColor *color = [UIColor invoke:@"colorWithRed:green:blue:alpha:"
                                 args:@(0), @(0.5), @(1), nil];
     NSLog(@"color: %@", color);
+
+
+
+    // 加密 [self printInfo]
+    [self invoke:@"cHJpbnRJbmZv" selectorEncryptType:LANEncryptTypeBase64];
+    
+    // 加密 [ViewController printInfo]
+    [@"ViewController" invokeClassMethod:@"cHJpbnRJbmZv" classEncryptType:LANEncryptTypeBase64 selectorEncryptType:LANEncryptTypeBase64];
 }
 
 @end
